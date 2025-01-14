@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Architecture", "Architecture", "{C28BF95E-9014-43FD-830E-273C468A12AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workspec.Architecture.SmartMocks", "src\Workspec.Architecture.SmartMocks\Workspec.Architecture.SmartMocks.csproj", "{64696902-BA00-4B54-81DE-05F68798DE10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workspec.Architecture.SmartMocks.Test", "tests\Workspec.Architecture.SmartMocks.Test\Workspec.Architecture.SmartMocks.Test.csproj", "{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SmartMocks", "SmartMocks", "{E564E5E4-B4B1-4115-942D-8A5CFE088DBB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64696902-BA00-4B54-81DE-05F68798DE10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64696902-BA00-4B54-81DE-05F68798DE10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64696902-BA00-4B54-81DE-05F68798DE10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64696902-BA00-4B54-81DE-05F68798DE10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{64696902-BA00-4B54-81DE-05F68798DE10} = {E564E5E4-B4B1-4115-942D-8A5CFE088DBB}
+		{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5} = {E564E5E4-B4B1-4115-942D-8A5CFE088DBB}
+		{E564E5E4-B4B1-4115-942D-8A5CFE088DBB} = {C28BF95E-9014-43FD-830E-273C468A12AE}
+	EndGlobalSection
+EndGlobal
