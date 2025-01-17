@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workspec.Architecture.Smart
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SmartMocks", "SmartMocks", "{E564E5E4-B4B1-4115-942D-8A5CFE088DBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workspec.Architecture.SmartMocks.ExampleApi", "examples\Workspec.Architecture.SmartMocks.ExampleApi\Workspec.Architecture.SmartMocks.ExampleApi.csproj", "{A7D4254C-C045-4C54-A23E-E11DDF9C5993}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7D4254C-C045-4C54-A23E-E11DDF9C5993}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7D4254C-C045-4C54-A23E-E11DDF9C5993}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7D4254C-C045-4C54-A23E-E11DDF9C5993}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7D4254C-C045-4C54-A23E-E11DDF9C5993}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -33,5 +39,6 @@ Global
 		{64696902-BA00-4B54-81DE-05F68798DE10} = {E564E5E4-B4B1-4115-942D-8A5CFE088DBB}
 		{3FEA6CEA-EC80-4E7A-B013-3F044C02AFA5} = {E564E5E4-B4B1-4115-942D-8A5CFE088DBB}
 		{E564E5E4-B4B1-4115-942D-8A5CFE088DBB} = {C28BF95E-9014-43FD-830E-273C468A12AE}
+		{A7D4254C-C045-4C54-A23E-E11DDF9C5993} = {E564E5E4-B4B1-4115-942D-8A5CFE088DBB}
 	EndGlobalSection
 EndGlobal

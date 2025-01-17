@@ -21,7 +21,7 @@ public class ScenarioBuilderTests
         const string scenarioName = "Test Scenario";
 
         // Act
-        var builder = new ScenarioBuilder(_mockLogger.Object, scenarioName);
+        var builder = new Scenario(_mockLogger.Object, scenarioName);
 
         // Assert
         _mockLogger.Verify(
@@ -38,7 +38,7 @@ public class ScenarioBuilderTests
     public void ScenarioBuilder_Given_ShouldAddStep()
     {
         // Arrange
-        var builder = new ScenarioBuilder(_mockLogger.Object, "Test Scenario");
+        var builder = new Scenario(_mockLogger.Object, "Test Scenario");
 
         // Act
         var givenBuilder = builder.Given("a user is logged in");
@@ -53,7 +53,7 @@ public class ScenarioBuilderTests
     public void ScenarioBuilder_When_ShouldAddStep()
     {
         // Arrange
-        var builder = new ScenarioBuilder(_mockLogger.Object, "Test Scenario");
+        var builder = new Scenario(_mockLogger.Object, "Test Scenario");
         var givenBuilder = builder.Given("a user is logged in");
 
         // Act
@@ -69,7 +69,7 @@ public class ScenarioBuilderTests
     public void ScenarioBuilder_Then_ShouldAddStep()
     {
         // Arrange
-        var builder = new ScenarioBuilder(_mockLogger.Object, "Test Scenario");
+        var builder = new Scenario(_mockLogger.Object, "Test Scenario");
         var givenBuilder = builder.Given("a user is logged in").When("the user requests data");
 
         // Act
@@ -85,7 +85,7 @@ public class ScenarioBuilderTests
     public void ScenarioBuilder_FluentAPI_ShouldAddMultipleSteps()
     {
         // Arrange
-        var builder = new ScenarioBuilder(_mockLogger.Object, "Test Scenario");
+        var builder = new Scenario(_mockLogger.Object, "Test Scenario");
 
         // Act
         builder
@@ -111,7 +111,7 @@ public class ScenarioBuilderTests
     public void ScenarioBuilder_ToGherkin_ShouldOutputCorrectSyntax()
     {
         // Arrange
-        var builder = new ScenarioBuilder(_mockLogger.Object, "Test Scenario");
+        var builder = new Scenario(_mockLogger.Object, "Test Scenario");
 
         builder
             .Given("a user is logged in")
@@ -136,7 +136,7 @@ Then the data is returned";
     public void ScenarioBuilder_ToGherkin_ShouldHandleEmptySteps()
     {
         // Arrange
-        var builder = new ScenarioBuilder(_mockLogger.Object, "Empty Scenario");
+        var builder = new Scenario(_mockLogger.Object, "Empty Scenario");
 
         // Act
         var gherkinOutput = builder.ToGherkin();
@@ -150,7 +150,7 @@ Then the data is returned";
     public void ScenarioBuilder_ShouldLogStepAddition()
     {
         // Arrange
-        var builder = new ScenarioBuilder(_mockLogger.Object, "Test Scenario");
+        var builder = new Scenario(_mockLogger.Object, "Test Scenario");
 
         // Act
         builder.Given("a user is logged in");

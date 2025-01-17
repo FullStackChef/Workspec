@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Moq;
 using System.Text;
 using Workspec.Architecture.SmartMocks.ApplicationModel;
 
@@ -7,12 +8,11 @@ namespace Workspec.Architecture.SmartMocks;
 /// <summary>
 /// Provides a fluent API for building and executing scenarios in the SmartMocks framework.
 /// </summary>
-public sealed class ScenarioBuilder
+public sealed class Scenario
 {
-    private static readonly Func<ValueTask> s_DefaultFunc = static () => ValueTask.CompletedTask;
+    private static readonly Func<ValueTask> s_defaultFunc = static () => ValueTask.CompletedTask;
 
-
-
+    #region LoggerMessage.Define
     /// <summary>
     /// Logs when a scenario is created.
     /// </summary>
@@ -30,7 +30,7 @@ public sealed class ScenarioBuilder
             LogLevel.Information,
             new EventId(2, nameof(LogStepAdded)),
             "{StepType} step '{Description}' added.");
-
+    #endregion
     /// <summary>
     /// The name of the scenario being built.
     /// </summary>
@@ -46,15 +46,18 @@ public sealed class ScenarioBuilder
     /// </summary>
     private readonly List<ScenarioStep> _steps = [];
 
+    private readonly MockBuilder _mockBuilder;
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="ScenarioBuilder"/> class.
+    /// Initializes a new instance of the <see cref="Scenario"/> class.
     /// </summary>
     /// <param name="logger">The logger to use for logging events.</param>
     /// <param name="scenarioName">The name of the scenario being built.</param>
-    internal ScenarioBuilder(ILogger logger, string scenarioName)
+    internal Scenario(ILogger logger, string scenarioName)
     {
         _logger = logger;
         _scenarioName = scenarioName;
+        _mockBuilder = new MockBuilder(logger);
         LogScenarioCreated(_logger, _scenarioName, null);
     }
 
@@ -67,15 +70,41 @@ public sealed class ScenarioBuilder
     public GivenScenario Given(string description, Func<ValueTask>? func = null) => new(this, description, func);
 
     /// <summary>
+    /// Registers a setup for a mock object.
+    /// </summary>
+    /// <typeparam name="T">The type of the mock object.</typeparam>
+    /// <param name="setup">The setup action to apply to the mock.</param>
+    public void WithMockSetup<T>(Action<Mock<T>> setup) where T : class => _mockBuilder.WithMockSetup(setup);
+
+    /// <summary>
+    /// Retrieves the mock object of the specified type, creating it if necessary.
+    /// </summary>
+    /// <typeparam name="T">The type of the mock object.</typeparam>
+    /// <returns>The mock object.</returns>
+    public Mock<T> GetMock<T>() where T : class => _mockBuilder.GetMock<T>();
+
+    /// <summary>
+    /// Validates interactions with the specified mock object.
+    /// </summary>
+    /// <typeparam name="T">The type of the mock object.</typeparam>
+    /// <param name="validation">The validation action to apply to the mock.</param>
+    /// <returns>The current <see cref="Scenario"/> instance.</returns>
+    public Scenario ValidateMock<T>(Action<Mock<T>> validation) where T : class
+    {
+        _mockBuilder.ValidateMock(validation);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a step to the scenario with the specified type, description, and action.
     /// </summary>
     /// <param name="type">The type of the step (e.g., Given, When, Then).</param>
     /// <param name="description">The description of the step.</param>
     /// <param name="func">The action to perform for this step. Defaults to a no-op if not provided.</param>
-    /// <returns>The current <see cref="ScenarioBuilder"/> instance.</returns>
-    private ScenarioBuilder AddStep(ScenarioStepType type, string description, Func<ValueTask>? func = null)
+    /// <returns>The current <see cref="Scenario"/> instance.</returns>
+    private Scenario AddStep(ScenarioStepType type, string description, Func<ValueTask>? func = null)
     {
-        func ??= s_DefaultFunc;
+        func ??= s_defaultFunc;
         _steps.Add(new ScenarioStep(type, description, func));
         LogStepAdded(_logger, type, description, null);
         return this;
@@ -119,15 +148,15 @@ public sealed class ScenarioBuilder
     /// </summary>
     public sealed class GivenScenario
     {
-        private readonly ScenarioBuilder _builder;
+        private readonly Scenario _builder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GivenScenario"/> class.
         /// </summary>
-        /// <param name="builder">The parent <see cref="ScenarioBuilder"/>.</param>
+        /// <param name="builder">The parent <see cref="Scenario"/>.</param>
         /// <param name="description">The description of the "Given" step.</param>
         /// <param name="func">The action to perform for this step. Defaults to a no-op if not provided.</param>
-        internal GivenScenario(ScenarioBuilder builder, string description, Func<ValueTask>? func = null)
+        internal GivenScenario(Scenario builder, string description, Func<ValueTask>? func = null)
         {
             _builder = builder;
             _builder.AddStep(ScenarioStepType.Given, description, func);
@@ -146,12 +175,26 @@ public sealed class ScenarioBuilder
         }
 
         /// <summary>
+        /// Registers a setup for a mock object within a "Given" step.
+        /// </summary>
+        /// <typeparam name="T">The type of the mock object.</typeparam>
+        /// <param name="setup">The setup action to apply to the mock.</param>
+        /// <returns>The current <see cref="GivenScenario"/> instance.</returns>
+        public GivenScenario WithMockSetup<T>(Action<Mock<T>> setup) where T : class
+        {
+            _builder.WithMockSetup(setup);
+            return this;
+        }
+
+        /// <summary>
         /// Transitions to a "When" step.
         /// </summary>
         /// <param name="description">The description of the "When" step.</param>
         /// <param name="func">The action to perform for this step. Defaults to a no-op if not provided.</param>
         /// <returns>An instance of <see cref="WhenScenario"/> to continue building the scenario.</returns>
         public WhenScenario When(string description, Func<ValueTask>? func = null) => new(_builder, description, func);
+
+
     }
 
     /// <summary>
@@ -159,15 +202,15 @@ public sealed class ScenarioBuilder
     /// </summary>
     public sealed class WhenScenario
     {
-        private readonly ScenarioBuilder _builder;
+        private readonly Scenario _builder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WhenScenario"/> class.
         /// </summary>
-        /// <param name="builder">The parent <see cref="ScenarioBuilder"/>.</param>
+        /// <param name="builder">The parent <see cref="Scenario"/>.</param>
         /// <param name="description">The description of the "When" step.</param>
         /// <param name="func">The action to perform for this step. Defaults to a no-op if not provided.</param>
-        internal WhenScenario(ScenarioBuilder builder, string description, Func<ValueTask>? func = null)
+        internal WhenScenario(Scenario builder, string description, Func<ValueTask>? func = null)
         {
             _builder = builder;
             _builder.AddStep(ScenarioStepType.When, description, func);
@@ -186,6 +229,17 @@ public sealed class ScenarioBuilder
         }
 
         /// <summary>
+        /// Registers a setup for a mock object within a "When" step.
+        /// </summary>
+        /// <typeparam name="T">The type of the mock object.</typeparam>
+        /// <param name="setup">The setup action to apply to the mock.</param>
+        /// <returns>The current <see cref="WhenScenario"/> instance.</returns>
+        public WhenScenario WithMockSetup<T>(Action<Mock<T>> setup) where T : class
+        {
+            _builder.WithMockSetup(setup);
+            return this;
+        }
+        /// <summary>
         /// Transitions to a "Then" step.
         /// </summary>
         /// <param name="description">The description of the "Then" step.</param>
@@ -199,15 +253,15 @@ public sealed class ScenarioBuilder
     /// </summary>
     public sealed class ThenScenario
     {
-        private readonly ScenarioBuilder _builder;
+        private readonly Scenario _builder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThenScenario"/> class.
         /// </summary>
-        /// <param name="builder">The parent <see cref="ScenarioBuilder"/>.</param>
+        /// <param name="builder">The parent <see cref="Scenario"/>.</param>
         /// <param name="description">The description of the "Then" step.</param>
         /// <param name="func">The action to perform for this step. Defaults to a no-op if not provided.</param>
-        internal ThenScenario(ScenarioBuilder builder, string description, Func<ValueTask>? func = null)
+        internal ThenScenario(Scenario builder, string description, Func<ValueTask>? func = null)
         {
             _builder = builder.AddStep(ScenarioStepType.Then, description, func);
         }
@@ -225,10 +279,30 @@ public sealed class ScenarioBuilder
         }
 
         /// <summary>
-        /// Implicitly converts a <see cref="ThenScenario"/> back to its parent <see cref="ScenarioBuilder"/>.
+        /// Registers a setup for a mock object within a "Then" step.
+        /// </summary>
+        /// <typeparam name="T">The type of the mock object.</typeparam>
+        /// <param name="setup">The setup action to apply to the mock.</param>
+        /// <returns>The current <see cref="ThenScenario"/> instance.</returns>
+        public ThenScenario WithMockSetup<T>(Action<Mock<T>> setup) where T : class
+        {
+            _builder.WithMockSetup(setup);
+            return this;
+        }
+
+        /// <summary>
+        /// Validates interactions with the specified mock object.
+        /// </summary>
+        /// <typeparam name="T">The type of the mock object.</typeparam>
+        /// <param name="validation">The validation action to apply to the mock.</param>
+        /// <returns>The current <see cref="Scenario"/> instance.</returns>
+        public Scenario ValidateMock<T>(Action<Mock<T>> validation) where T : class => _builder.ValidateMock(validation);
+
+        /// <summary>
+        /// Implicitly converts a <see cref="ThenScenario"/> back to its parent <see cref="Scenario"/>.
         /// </summary>
         /// <param name="thenScenario">The "Then" scenario to convert.</param>
-        public static implicit operator ScenarioBuilder(ThenScenario thenScenario) => thenScenario._builder;
+        public static implicit operator Scenario(ThenScenario thenScenario) => thenScenario._builder;
     }
 
     /// <summary>

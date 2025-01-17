@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Workspec.Architecture.SmartMocks\Workspec.Architecture.SmartMocks.csproj" />
+    <ProjectReference Include="..\..\src\Workspec.Architecture.SmartMocks\Workspec.Architecture.SmartMocks.csproj" />
   </ItemGroup>
 
   <ItemGroup>
