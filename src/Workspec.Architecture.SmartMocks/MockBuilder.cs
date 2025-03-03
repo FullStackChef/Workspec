@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
+using System.Linq.Expressions;
 
 namespace Workspec.Architecture.SmartMocks;
 
@@ -113,14 +114,23 @@ public class MockBuilder
         return (Mock<T>)mock;
     }
 
+    public MockBuilder WithMockSetup<T, TResult>(
+        Expression<Func<T, TResult>> setupExpression,
+        TResult returnValue) where T : class =>
+        WithMockSetup(setupExpression, () => returnValue);
+
     /// <summary>
-    /// Registers a setup action for the specified mock type. 
+    /// Registers a setup action for the specified mock type with a dynamic return value based on input parameters.
     /// If the mock already exists, the setup is applied immediately.
     /// </summary>
     /// <typeparam name="T">The type of the mock object to set up.</typeparam>
-    /// <param name="setup">The setup action to apply to the mock.</param>
+    /// <typeparam name="TResult">The return type of the mocked setup.</typeparam>
+    /// <param name="setupExpression">The setup expression specifying the method or property to mock.</param>
+    /// <param name="returnValueFunc">A function to calculate the return value dynamically based on the mock's arguments.</param>
     /// <returns>The current <see cref="MockBuilder"/> instance for chaining.</returns>
-    public MockBuilder WithMockSetup<T>(Action<Mock<T>> setup) where T : class
+    public MockBuilder WithMockSetup<T, TResult>(
+        Expression<Func<T, TResult>> setupExpression,
+        Func<TResult> returnValueFunc) where T : class
     {
         var typeName = typeof(T).Name;
 
@@ -130,11 +140,51 @@ public class MockBuilder
             _mockSetups[typeof(T)] = setups;
         }
 
-        setups.Add(mock => setup((Mock<T>)mock));
+        setups.Add(mock =>
+            ((Mock<T>)mock).Setup(setupExpression).Returns(returnValueFunc));
 
         if (_mocks.TryGetValue(typeof(T), out var existingMock))
         {
-            setup((Mock<T>)existingMock);
+            ((Mock<T>)existingMock).Setup(setupExpression).Returns(returnValueFunc);
+        }
+
+        LogMockSetupRegistered(_logger, typeName, null);
+        return this;
+    }
+
+
+
+    /// <summary>
+    /// Registers a setup action for the specified mock type with a dynamic return value based on input parameters.
+    /// If the mock already exists, the setup is applied immediately.
+    /// </summary>
+    /// <typeparam name="T">The type of the mock object to set up.</typeparam>
+    /// <typeparam name="TResult">The return type of the mocked setup.</typeparam>
+    /// <param name="setupExpression">The setup expression specifying the method or property to mock.</param>
+    /// <param name="returnValueFunc">A function to calculate the return value dynamically based on the method's input arguments.</param>
+    /// <returns>The current <see cref="MockBuilder"/> instance for chaining.</returns>
+    public MockBuilder WithMockSetup<T, TResult>(
+        Expression<Func<T, TResult>> setupExpression,
+        Func<T, TResult> returnValueFunc) where T : class
+    {
+        var typeName = typeof(T).Name;
+
+        if (!_mockSetups.TryGetValue(typeof(T), out var setups))
+        {
+            setups = new List<Action<object>>();
+            _mockSetups[typeof(T)] = setups;
+        }
+
+        setups.Add(mock =>
+        {
+            var typedMock = (Mock<T>)mock;
+            typedMock.Setup(setupExpression).Returns(returnValueFunc);
+        });
+
+        if (_mocks.TryGetValue(typeof(T), out var existingMock))
+        {
+            var typedMock = (Mock<T>)existingMock;
+            typedMock.Setup(setupExpression).Returns(returnValueFunc);
         }
 
         LogMockSetupRegistered(_logger, typeName, null);

@@ -3,9 +3,7 @@
 internal enum ScenarioStepType
 {
     Given,
-    AndGiven,
     When,
-    AndWhen,
     Then,
-    AndThen
+    And
 }
