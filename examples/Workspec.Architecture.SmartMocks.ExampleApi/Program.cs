@@ -23,7 +23,7 @@ app.ForFeature("Authentication", "authentication")
    .WithScenarios(feature =>
    {
        feature.WithScenario("A user is authenticated",
-               scenario => scenario
+               scenario => scenario.Given(_ => _.the_user_is_authenticated)
                    .Given<IAuthenticationService>(service => service.Authenticated, true)
                    .When(ep => ep.Get("authenticated"))
                    .Then(sp => "we return the scenario as gherkin syntax",

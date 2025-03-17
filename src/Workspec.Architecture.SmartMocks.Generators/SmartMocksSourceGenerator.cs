@@ -8,6 +8,10 @@ using System.Text;
 namespace Workspec.Architecture.SmartMocks.Generators;
 
 [Generator]
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "MicrosoftCodeAnalysisCorrectness", 
+    "RS1041:Compiler extensions should be implemented in assemblies targeting netstandard2.0", 
+    Justification = "<Pending>")]
 public class SmartMocksSourceGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
