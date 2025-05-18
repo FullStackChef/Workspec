@@ -80,7 +80,7 @@ public class GivenIncrementalGenerator : IIncrementalGenerator
                     var interfaceSymbol = propertySymbol.ContainingType;
                     if (!givenData.TryGetValue(interfaceSymbol, out var list))
                     {
-                        list = new List<GivenInfo>();
+                        list = [];
                         givenData[interfaceSymbol] = list;
                     }
 

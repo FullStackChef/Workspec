@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.4",
+    "tailwindcss": "^4.1.4"
+  },
+  "name": "workspec.studio",
+  "version": "1.0.0",
+  "devDependencies": {},
+  "scripts": {
+    "start": "npx @tailwindcss/cli -i Styles/style.prebuild.css -o wwwroot/css/app.css --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

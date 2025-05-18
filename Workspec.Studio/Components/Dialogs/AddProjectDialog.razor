@@ -1,0 +1,61 @@
+﻿
+@inject IProjectServiceClient ProjectService
+@inject IProductServiceClient ProductClient
+@inject NavigationManager Navigation
+
+<SfDialog Width="500px" IsModal="true" Visible="@_visible">
+    <DialogTemplates>
+        <Header>New Project</Header>
+        <Content>
+            <EditForm Model="@_formModel" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="flex flex-col space-y-4">
+                    <SfTextBox @bind-Value="_formModel.Name" Placeholder="Project Name"></SfTextBox>
+                    <SfTextBox @bind-Value="_formModel.Path" Placeholder="Path (e.g. /next-gen-ai)"></SfTextBox>
+                    <SfTextArea @bind-Value="_formModel.Description" Placeholder="Project Description"></SfTextArea>
+                    <SfDropDownList TValue="int" TItem="ProductQueryModel" AllowFiltering="true"  DataSource="@_productOptions"
+                                    @bind-Value="_formModel.ProductId" Placeholder="Select a product">
+                    </SfDropDownList>
+                </div>
+                <ValidationSummary />
+            </EditForm>
+        </Content>
+        <FooterTemplate>
+            <SfButton CssClass="e-primary" IsPrimary="true" Type="Submit">Create</SfButton>
+            <SfButton CssClass="e-flat" OnClick="Hide">Cancel</SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+@code {
+    private bool _visible;
+    private CreateProjectFormModel _formModel = new();
+    private IReadOnlyList<ProductQueryModel> _productOptions = [];
+
+    public async Task Show()
+    {
+        _visible = true;
+        _formModel = new();
+        _productOptions = await ProductClient.RefreshAsync();
+        StateHasChanged(); // ensure it re-renders
+    }
+
+    public void Hide()
+    {
+        _visible = false;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var created = await ProjectService.CreateAsync(
+            new CreateProjectRecord(
+                _formModel.ProductId,
+                _formModel.Name,
+                _formModel.Path,
+                _formModel.Description));
+
+        Hide();
+
+        Navigation.NavigateTo($"/projects/{created.Path}");
+    }
+}

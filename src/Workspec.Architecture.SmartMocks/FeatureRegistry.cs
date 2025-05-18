@@ -5,7 +5,7 @@
 /// </summary>
 public class FeatureRegistry
 {
-    private readonly List<FeatureBuilder.FeatureVersionBuilder> _features = new();
+    private readonly List<FeatureBuilder.FeatureVersionBuilder> _features = [];
 
     /// <summary>
     /// Registers a new feature version.

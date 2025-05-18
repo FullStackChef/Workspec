@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>cd998dd4-4f67-4fdb-9571-4d8be387a0b0</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Dapr.AspNetCore" Version="1.15.4" />
+		<PackageReference Include="Syncfusion.Blazor.Layouts" Version="29.1.39" />
+		<PackageReference Include="Syncfusion.Blazor.Navigations" Version="29.1.39" />
+		<PackageReference Include="Syncfusion.Blazor.Popups" Version="29.1.39" />
+		<PackageReference Include="Syncfusion.Blazor.Grid" Version="29.1.39" />
+		<PackageReference Include="Syncfusion.Blazor.TreeGrid" Version="29.1.39" />
+		<PackageReference Include="Syncfusion.Blazor.Themes" Version="29.1.39" />
+		<PackageReference Include="System.Reactive" Version="6.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Workspec.Contracts.Queries\Workspec.Contracts.Queries.csproj" />
+	  <ProjectReference Include="..\Workspec.Contracts\Workspec.Contracts.csproj" />
+	  <ProjectReference Include="..\Workspec.ServiceDefaults\Workspec.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+
+<div class="absolute top-0 flex right-0 bg-slate-50 border border-slate-100 px-2 py-1 gap-5 items-center">
+    <button class="rounded-full cursor-pointer px-3 py-2 bg-orange-100 hover:bg-orange-200" title="Risk" @onclick="() => OnRiskAssigned.InvokeAsync(Requirement)">
+        <i class="ri-alert-line text-orange-500"></i>
+    </button>
+    <button class="rounded-full cursor-pointer px-3 py-2 bg-green-100 hover:bg-green-200" title="Checklist" @onclick="() => OnChecklistAdded.InvokeAsync(Requirement)">
+        <i class="ri-list-check-2 text-green-600"></i>
+    </button>
+    <button class="rounded-full cursor-pointer px-3 py-2 bg-indigo-100 hover:bg-indigo-200" title="Flow" @onclick="() => OnFlowLinked.InvokeAsync(Requirement)">
+        <i class="ri-flow-chart text-indigo-500"></i>
+    </button>
+    <button class="rounded-full cursor-pointer px-3 py-2 bg-blue-100 hover:bg-blue-200" title="Assign to user" @onclick="() => OnUserAssigned.InvokeAsync(Requirement)">
+        <i class="ri-user-line text-blue-500"></i>
+    </button>
+    <button class="rounded-full cursor-pointer px-3 py-2 bg-purple-100 hover:bg-purple-200" title="Decision" @onclick="() => OnDecisionTagged.InvokeAsync(Requirement)">
+        <i class="ri-heart-line text-purple-500"></i>
+    </button>
+    <button class="rounded-full cursor-pointer px-3 py-2 bg-red-100 hover:bg-red-200" title="Remove" @onclick="() => OnRemoveRequested.InvokeAsync(Requirement)">
+        <i class="ri-close-line text-red-500"></i>
+    </button>
+</div>
+
+@code {
+    [Parameter] public RequirementNode Requirement { get; set; } = default!;
+
+    [Parameter] public EventCallback<RequirementNode> OnRiskAssigned { get; set; }
+    [Parameter] public EventCallback<RequirementNode> OnChecklistAdded { get; set; }
+    [Parameter] public EventCallback<RequirementNode> OnFlowLinked { get; set; }
+    [Parameter] public EventCallback<RequirementNode> OnUserAssigned { get; set; }
+    [Parameter] public EventCallback<RequirementNode> OnDecisionTagged { get; set; }
+    [Parameter] public EventCallback<RequirementNode> OnRemoveRequested { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Hook global key events for hotkeys if needed (optional for integration)
+        base.OnInitialized();
+    }
+}

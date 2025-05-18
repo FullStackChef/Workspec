@@ -1,0 +1,36 @@
+﻿@implements IDisposable
+@inject MenuBuilderService MenuService
+
+<SfMenu Items="@_menuItems" Orientation="NavigationOrientation.Horizontal">
+    <MenuEvents TValue="MenuItem" ItemSelected="ItemSelected" />
+</SfMenu>
+
+<AddProjectDialog @ref="AddProjectDialog" />
+
+@code {
+    private AddProjectDialog AddProjectDialog = default!;
+    private List<MenuItem> _menuItems = [];
+    private IDisposable? _subscription;
+
+    protected override void OnInitialized()
+    {
+        _subscription = MenuService.MenuItems.Subscribe(items =>
+        {
+            _menuItems = items;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    public async Task ItemSelected(MenuEventArgs<MenuItem> args)
+    {
+        if (args.Item.Id == "add-project")
+        {
+            await AddProjectDialog.Show();
+        }
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+}

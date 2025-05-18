@@ -1,0 +1,48 @@
+﻿
+<div class="p-2 space-y-2">
+    <SfTextBox Placeholder="Filter requirements..." Value="@FilterText" Input="@(OnFilterChanged)" />
+
+</div>
+<div class="p-2 space-y-2">
+    <SfTreeView TValue="RequirementNode" @ref="TreeView" ShowCheckBox="false">
+        <TreeViewFieldsSettings DataSource="FilteredTreeData" HasChildren="HasChildren" Id="Id" Text="Title" Child="@("Children")" />
+    </SfTreeView>
+</div>
+@code {
+    private SfTreeView<RequirementNode> TreeView;
+    private string FilterText { get; set; } = "";
+
+    [Parameter] public List<RequirementNode> TreeData { get; set; } = [];
+    [Parameter] public EventCallback<RequirementNode> OnNodeSelected { get; set; }
+
+    private void OnFilterChanged(InputEventArgs args)
+    {
+        FilterText = args?.Value?.ToString() ?? "";
+        StateHasChanged(); // Rerender component using new FilterText
+    }
+    private List<RequirementNode> FilteredTreeData =>
+       string.IsNullOrWhiteSpace(FilterText)
+           ? PruneRequirements(TreeData)
+           : PruneRequirements(TreeData.Where(n => n.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList());
+
+    private List<RequirementNode> PruneRequirements(List<RequirementNode> input)
+    {
+        return input
+            .Where(n => n.Type != "Requirement")
+            .Select(n => new RequirementNode
+                {
+                    Id = n.Id,
+                    Title = n.Title,
+                    Type = n.Type,
+                    ParentId = n.ParentId,
+                    HasChildren = n.Children.Any(c => c.Type != "Requirement"),
+                    Children = PruneRequirements(n.Children)
+                }).ToList();
+    }
+    private async Task HandleNodeSelected(NodeSelectEventArgs args)
+    {
+        var node = TreeData.FirstOrDefault(n => n.Id == args.NodeData.Id.ToString());
+        if (node != null)
+            await OnNodeSelected.InvokeAsync(node);
+    }
+}

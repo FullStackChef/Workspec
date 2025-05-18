@@ -171,7 +171,7 @@ public class MockBuilder
 
         if (!_mockSetups.TryGetValue(typeof(T), out var setups))
         {
-            setups = new List<Action<object>>();
+            setups = [];
             _mockSetups[typeof(T)] = setups;
         }
 

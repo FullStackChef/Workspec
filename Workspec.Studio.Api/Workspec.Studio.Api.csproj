@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="3.8.4" />
+	</ItemGroup>
+	
+
+  <ItemGroup>
+	  <ProjectReference Include="..\Workspec.Domain.AI\Workspec.Domain.AI.csproj" />
+	  <ProjectReference Include="..\Workspec.Domain.Modules\Workspec.Domain.Modules.csproj" />
+	  <ProjectReference Include="..\Workspec.Odata.Queries\Workspec.Odata.Queries.csproj" />
+	  <ProjectReference Include="..\Workspec.ServiceDefaults\Workspec.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

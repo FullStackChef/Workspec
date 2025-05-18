@@ -1,0 +1,13 @@
+﻿@page "/projects/{projectCode}"
+@inject IProjectContextService ProjectContext
+
+<h3>Project Dashboard</h3>
+
+@code {
+    [Parameter] public required string ProjectCode { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await ProjectContext.LoadProjectByPathAsync(ProjectCode);
+    }
+}

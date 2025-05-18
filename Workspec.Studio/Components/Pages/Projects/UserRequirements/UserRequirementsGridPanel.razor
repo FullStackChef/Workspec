@@ -1,0 +1,71 @@
+﻿<div class="m-h-full overlow-auto   ">
+<SfTreeGrid DataSource="@TreeData"
+            TreeColumnIndex="0"
+            IdMapping="Id"
+            ParentIdMapping="ParentId"
+            AllowReordering="false"
+            AllowSorting="false"
+            AllowResizing="false"
+            ChildMapping="Children"
+            AllowSelection="true"
+            AllowRowDragAndDrop="true">
+    <TreeGridEvents RowSelected="(RowSelectEventArgs<RequirementNode> args)=>SelectNode(args.Data)"></TreeGridEvents>
+    <TreeGridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single" EnableToggle="true"></TreeGridSelectionSettings>
+    <TreeGridTemplates>
+        <RowTemplate>
+            @{
+                var node = (context as RequirementNode);
+                switch (node?.Type.ToLower())
+                {
+                    case "requirement":
+                        <td class="e-rowdragdrop" tabindex="-1">
+                            <div class="e-icons e-rowcelldrag e-dtdiagonalright e-icon-rowdragicon"></div>
+                        </td>
+                        <td class="e-rowcell relative e-leftalign" @onclick="()=>SelectNode(node)">
+                            @node.Title - @node.Description
+                            @if (node.Id == _selectedNode?.Id)
+                            {
+                            <RequirementActionBar Requirement="@node" />
+                            }
+                        </td>
+                        break;
+                    case "feature":
+                        <td class="e-rowcell bg-slate-50 py-1 e-leftalign" colspan="2">
+                            <span class="text-xs text-blue-500">@node.Title</span>
+                        </td>
+                        break;
+                    default:
+                        <td class="e-rowcell bg-zinc-100 e-leftalign" colspan="2">
+                            <div class="flex">
+                                <div class="flex flex-1 flex-column gap-2">
+                                    <span class="font-bold">@node?.Title</span>
+                                    <span class="font-normal">@node?.Description</span>
+                                </div>
+                                <RowTemplateTreeColumn></RowTemplateTreeColumn>
+                            </div>
+                        </td>
+                        break;
+                }
+            }
+        </RowTemplate>
+    </TreeGridTemplates>
+    <TreeGridColumns>
+        <TreeGridColumn Field="Title">
+            <HeaderTemplate>
+                User Requirements
+            </HeaderTemplate>
+        </TreeGridColumn>
+    </TreeGridColumns>
+</SfTreeGrid>
+</div>
+@code {
+    private RequirementNode? _selectedNode { get; set; } = null;
+    [Parameter] public required List<RequirementNode> TreeData { get; set; }
+
+    private void SelectNode(RequirementNode requirementNode)
+    {
+
+        _selectedNode = _selectedNode == requirementNode ? null : requirementNode;
+        StateHasChanged();
+    }
+}

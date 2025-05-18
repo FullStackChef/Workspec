@@ -1,0 +1,27 @@
+﻿@inject NavigationManager Navigation
+@inject MenuBuilderService MenuService
+@inherits LayoutComponentBase
+
+    <HeaderComponent />
+
+    <main class="flex-grow bg-gray-100 text-gray-900">
+        @Body
+    </main>
+@code {
+    private List<MenuItem> TopMenuItems = new();
+    private string Username => "Brett Smith";
+
+    private List<DropDownMenuItem> UserMenuItems = new()
+    {
+        new() { Text = "Profile" },
+        new() { Text = "Settings" },
+        new() { Separator = true },
+        new() { Text = "Sign Out", Url = "/authentication/logout" }
+    };
+
+    protected override void OnInitialized()
+    {
+        var area = Navigation.ToBaseRelativePath(Navigation.Uri).Split("/").FirstOrDefault() ?? "home";
+        TopMenuItems = MenuService.GetAreaMenu(area);
+    }
+}

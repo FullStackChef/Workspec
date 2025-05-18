@@ -1,0 +1,32 @@
+﻿@page "/projects/{ProjectCode}/user-requirements"
+@inject IProjectContextService ProjectContext
+<SfSplitter Width="100%" Height="100%">
+    <SplitterPanes>
+        <SplitterPane Size="18%" Min="15%">
+            <UserRequirementsTreePanel TreeData="@TreeData" />
+        </SplitterPane>
+        <SplitterPane Size="80%" Min="50%">
+                <UserRequirementsGridPanel TreeData="@TreeData" />
+        </SplitterPane>
+    </SplitterPanes>
+</SfSplitter>
+@code {
+    [Parameter] public required string ProjectCode { get; set; }
+    private List<RequirementNode> TreeData = [];
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await ProjectContext.LoadProjectByPathAsync(ProjectCode);
+    }
+    protected override void OnInitialized()
+    {
+        ProjectContext.CurrentProject
+        .Where(p => p != null)
+        .Select(p => ProjectNodeMapper.MapProjectToRequirementNodes(p!))
+        .Subscribe(nodes =>
+        {
+            TreeData = nodes;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}
